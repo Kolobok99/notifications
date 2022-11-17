@@ -1,2 +1,4 @@
 /.idea
 /backend/freeze_req.txt
+/backend/.env.dev
+/venv
