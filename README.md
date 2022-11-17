@@ -90,7 +90,7 @@ Notifications Service - REST API для рассылки сообщений кл
 		REDIS_HOST=redis
 		REDIS_PORT=6379
 		
-		echo API_KEY={your_api_key}
+		API_KEY={your_api_key}
 
 4. Инициализировать .env.prod.email со следующими переменными:
 
