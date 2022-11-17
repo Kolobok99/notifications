@@ -11,9 +11,7 @@ networks:
 services:
   web:
     container_name: nots_web_container
-    build:
-      context: ../backend
-      dockerfile: Dockerfile.prod
+    image: "${WEB_IMAGE}"
     command: bash -c "
       python manage.py makemigrations
       && python manage.py migrate
@@ -24,6 +22,8 @@ services:
       - static_volume:/web/static
     expose:
       - 8000
+#    ports:
+#      - "8000:8000"
     env_file:
       - ../backend/.env_files.prod/.env.prod.email
       - ../backend/.env_files.prod/.env.prod.settings
@@ -49,19 +49,20 @@ services:
   celery:
     container_name: nots_celery_container
     restart: always
-    build: ../backend
+    image: "${CELERY_IMAGE}"
     command: celery -A conf worker -B -l info
     env_file:
       - ../backend/.env_files.prod/.env.prod.settings
       - ../backend/.env_files.prod/.env.prod.celery
+#    volumes:
+#      - ../backend/:/app/
     depends_on:
       - db
       - redis
       - web
 
   nginx:
-    build:
-      context: ../nginx.prod
+    image: "${NGINX_IMAGE}"
     ports:
       - "80:80"
     volumes:

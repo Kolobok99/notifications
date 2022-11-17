@@ -198,3 +198,22 @@ def mailing_statistic_generator(mailing: mailing_models.Mailing) -> None:
     statistic.report += f"Не доставлено по времененному интервалу: {statistic.is_limited_count}\n"
 
     statistic.save()
+
+
+def send_email(email: str, message_header: str, message: str) -> None:
+    """
+        Отправляет эл. письмо на email с текстом message и заголовком message_header
+
+        Args:
+            email (str): эл. адрес получателя письма
+            message_header (str): заголовок письма
+            message(str): текст письма
+    """
+
+    send_mail(
+        message_header,
+        message,
+        settings.EMAIL_HOST,
+        [email],
+        fail_silently=False
+    )
