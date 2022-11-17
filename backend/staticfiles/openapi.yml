@@ -1,0 +1,613 @@
+openapi: "3.0.2"
+info:
+  title: "Notification service API"
+  description: "OpenAPI для тестового задания 'Сервис уведомлений'"
+  version: "1.0"
+  contact:
+    email: "izolotavin99@gmail.com"
+  license:
+    name: "BSD License"
+servers:
+  - url: "http://127.0.0.1:8000/api/v1/"
+tags:
+  - name: tag
+  - name: client
+  - name: mailing
+security:
+- basicAuth: []
+- bearerAuth: []
+
+
+paths:
+  /tag/:
+    parameters: []
+    get:
+      operationId: tag_list
+      summary: get a list of ClientTags
+      responses:
+        '200':
+          description: 'Return array of ClientTags'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientTag'
+        '401':
+          $ref: '#/components/responses/401'
+
+      tags:
+        - tag
+    post:
+      operationId: tag_create
+      summary: add new ClientTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientTag'
+
+      responses:
+        '201':
+          description: 'New ClientTag added'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ClientTag'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors/properties/ClientTag'
+
+      tags:
+        - tag
+
+  /tag/{title}/:
+    parameters:
+      - in: path
+        name: title
+        description: Название тега (начинается с /#)
+        required: true
+        allowEmptyValue: false
+        schema:
+          $ref: '#/components/schemas/ClientTag/properties/tag'
+
+    get:
+      operationId: tag_retrieve
+      summary: get ClientTag by {title}
+      responses:
+        '200':
+          description: 'Return ClientTag by title'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientTag'
+        '404':
+          $ref: '#/components/responses/404'
+
+      tags:
+        - tag
+    delete:
+      operationId: tag_delete
+      summary: delete ClientTag by {title}
+      responses:
+        '204':
+          description: 'Tag with {title} deleted'
+          content: {}
+        '404':
+          $ref: '#/components/responses/404'
+
+      tags:
+        - tag
+
+  /client/:
+    get:
+      operationId: client_list
+      summary: get a list of Clients
+      responses:
+        '200':
+          description: 'Return array of Clients'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '404':
+          $ref: '#/components/responses/404'
+      tags:
+        - client
+    post:
+      operationId: client_create
+      summary: add new Client
+      requestBody:
+        $ref: '#/components/requestBodies/Client'
+      responses:
+        '201':
+          description: 'New Client added'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Client'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors/properties/Client'
+      tags:
+        - client
+
+  /client/{phone}/:
+    parameters:
+      - in: path
+        name: phone
+        description: Номер телефона в формате 7XXXXXXXXXX
+        required: true
+        allowEmptyValue: false
+        schema:
+          $ref: '#/components/schemas/Client/properties/phone'
+        example: 712345677888
+    get:
+      operationId: client_retrieve
+      summary: get Client by {phone}
+      responses:
+        '200':
+          description: 'Return Client data by ID(phone)'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '404':
+          $ref: '#/components/responses/404'
+      tags:
+        - client
+    patch:
+      operationId: client_partial_update
+      summary: patch Client by {phone}
+      requestBody:
+        $ref: '#/components/requestBodies/Client'
+      responses:
+        '200':
+          description: 'Client with {phone} successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors/properties/Client'
+      tags:
+        - client
+    put:
+      operationId: client_update
+      summary: put Client by {phone}
+      requestBody:
+        $ref: '#/components/requestBodies/Client'
+      responses:
+        '200':
+          description: 'Client with {phone} successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors/properties/Client'
+      tags:
+        - client
+    delete:
+      operationId: client_delete
+      summary: delete Client by {phone}
+      responses:
+        '204':
+          description: 'Tag with {title} deleted'
+          content: { }
+        '404':
+          $ref: '#/components/responses/404'
+      tags:
+        - client
+
+  /statistic/:
+    get:
+      operationId: statistic_list
+      summary: get a list of MailingStatistic
+      responses:
+        '200':
+          description: 'Return array of MailingStatistic'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MailingStatistic'
+      tags:
+        - statistic
+
+
+  /mailing/:
+    get:
+      operationId: mailing_list
+      summary: get a list of Mailings
+      responses:
+        '200':
+          description: 'Return array of Clients'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mailing'
+      tags:
+        - mailing
+    post:
+      operationId: mailing_create
+      summary: add new Mailing
+      requestBody:
+        $ref: '#/components/requestBodies/Mailing'
+      responses:
+        '201':
+          description: 'New Mailing added'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mailing'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors/properties/Mailing'
+      tags:
+        - mailing
+
+  /mailing/{id}/:
+    parameters:
+      - in: path
+        name: id
+        description: Идентификатор Mailing (1-...)
+        required: true
+        allowEmptyValue: false
+        schema:
+          $ref: '#/components/schemas/Mailing/properties/id'
+    get:
+      operationId: mailing_retrieve
+      summary: get Mailing by {id}
+      responses:
+        '200':
+          description: 'Return Mailing data by ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mailing'
+        '404':
+          $ref: '#/components/responses/404'
+      tags:
+        - mailing
+    patch:
+      operationId: mailing_partial_update
+      summary: patch Mailing by {ID}
+      requestBody:
+        $ref: '#/components/requestBodies/Mailing'
+      responses:
+        '200':
+          description: 'Mailing with {ID} successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mailing'
+        '403':
+          description: 'Mailing with status (STARTED/FINISHED) is prohibited'
+          content: { }
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors/properties/Mailing'
+      tags:
+        - mailing
+    put:
+      operationId: mailing_update
+      summary: put Mailing by {ID}
+      requestBody:
+        $ref: '#/components/requestBodies/Mailing'
+      responses:
+        '200':
+          description: 'Mailing with {ID} successfully updated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mailing'
+        '403':
+          description: 'Mailing with status (STARTED/FINISHED) is prohibited'
+          content: { }
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors/properties/Mailing'
+
+      tags:
+        - mailing
+    delete:
+      operationId: mailing_delete
+      summary: delete Mailing by {ID}
+      responses:
+        '204':
+          description: 'Tag with {title} deleted'
+          content: { }
+        '404':
+          $ref: '#/components/responses/404'
+      tags:
+        - mailing
+
+components:
+
+    securitySchemes:
+      basicAuth:
+        type: http
+        description: Авторизация с использование login/password
+        scheme: basic
+
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+
+    requestBodies:
+      Client:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+
+      Mailing:
+         required: true
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Mailing'
+
+    responses:
+
+      401:
+        description: "Not authenticated!"
+        content:
+          text/plain:
+            schema:
+              title: "not_authenticated"
+              type: string
+      404:
+        description: Not found resource
+        content: {}
+
+
+    schemas:
+      Errors:
+        type: object
+        properties:
+          ClientTag:
+            type: object
+            properties:
+              error_tag_start:
+                default: 'ошибка: тэг начинается с "#"!'
+              error_tag_spaces:
+                default: 'ошибка: тэг не содержит пробелов!'
+          Client:
+            type: object
+            properties:
+              error_phone_format:
+                default: 'ошибка: введите номер в формате 7XXXXXXXXXX'
+          Mailing:
+            type: object
+            properties:
+              start_time_>_end_time:
+                default: 'ошибка: время начала > времени конца'
+              current_time_>_end_time:
+                default: 'ошибка: текущее время > времени конца'
+              error_time_interval:
+                default: 'ошибка: неккоректное время временного интервала'
+
+
+
+
+
+
+      ClientTag:
+        required:
+          - tag
+        type: object
+        properties:
+          tag:
+            title: Тэг
+            type: string
+            uniqueItems: true
+            maxLength: 10
+            minLength: 2
+            pattern: '^#[\S]{0,}$'
+            example: '#ТЭГ'
+
+      RegionCode:
+        required:
+          - code
+        type: object
+        properties:
+          code:
+            title: Региональный код мобильного оператора
+            uniqueItems: true
+            type: integer
+            maxLength: 3
+            minLength: 3
+            example: 123
+
+      Client:
+        required:
+          - phone
+        type: object
+        properties:
+          id:
+            title: ID
+            type: integer
+            minimum: 1
+            readOnly: true
+            uniqueItems: true
+          phone:
+            title: Номер телефона
+            type: string
+            maxLength: 11
+            minLength: 11
+            uniqueItems: true
+            pattern: '^7\d{10}$'
+            example: 71234567788
+          timezone:
+            title: Часовой пояс
+            type: integer
+            maximum: +14
+            minimum: -12
+            example: 2
+          region_code:
+#            title: Код мобильного оператора
+#            type: string
+#            readOnly: true
+            $ref: '#/components/schemas/RegionCode/properties/code'
+
+          tags:
+#            $ref: '#/components/schemas/ClientTag/properties/tag'
+            type: array
+            items:
+              $ref: '#/components/schemas/ClientTag/properties/tag'
+
+      Mailing:
+        required:
+          - start_time
+          - end_time
+          - text
+        type: object
+        properties:
+          id:
+            title: ID
+            type: integer
+            readOnly: true
+          status:
+            title: Status
+            type: string
+            readOnly: true
+            enum:
+              - CREATED
+              - STARTED
+              - FINISHED
+            example: 'CREATED'
+          start_time:
+            title: Дата и время начала
+            type: string
+            format: date-time
+          end_time:
+            title: Дата и время окончания
+            type: string
+            format: date-time
+          text:
+            title: Текст сообщения
+            type: string
+            minLength: 1
+          filter_codes:
+            type: array
+            items:
+              title: Региональные коды
+              type: string
+            uniqueItems: true
+          filter_tags:
+            type: array
+            items:
+              title: 'Теги:'
+              type: array
+              items:
+                $ref: '#/components/schemas/ClientTag'
+            uniqueItems: true
+          task_id:
+            title: ID задачи
+            type: string
+            readOnly: true
+            minLength: 1
+            x-nullable: true
+          time_interval_start:
+            title: Временной интервал (Старт)
+            type: string
+            default: '00:00:00'
+          time_interval_end:
+            title: Временной интервал (Конец)
+            type: string
+            default: '23:59:00'
+          statistic:
+            $ref: '#/components/schemas/MailingStatistic'
+
+      MailingStatistic:
+        readOnly: true
+        required:
+          - mailing
+        type: object
+        properties:
+          id:
+            title: ID
+            type: integer
+            readOnly: true
+          msg_count:
+            title: Общее кол-во сообщений
+            type: integer
+            maximum: 2147483647
+            minimum: 0
+            x-nullable: true
+          created_count:
+            title: 'Кол-во созданных '
+            type: integer
+            maximum: 2147483647
+            minimum: 0
+            x-nullable: true
+          sent_count:
+            title: Кол-во отправленных
+            type: integer
+            maximum: 2147483647
+            minimum: 0
+            x-nullable: true
+          delivered_count:
+            title: Кол-во доставленных
+            type: integer
+            maximum: 2147483647
+            minimum: 0
+            x-nullable: true
+          errors_count:
+            title: Кол-во НЕдоставленных
+            type: integer
+            maximum: 2147483647
+            minimum: 0
+            x-nullable: true
+          is_overed_count:
+            title: Кол-во НЕдоставленных (по времени)
+            type: integer
+            maximum: 2147483647
+            minimum: 0
+            x-nullable: true
+          is_limited_count:
+            title: Кол-во НЕдоставленных (по временному интервалу)
+            type: integer
+            maximum: 2147483647
+            minimum: 0
+            x-nullable: true
+          report:
+            title: Отчет
+            type: string
+            minLength: 1
+          mailing:
+            title: Mailing
+            type: integer

@@ -20,9 +20,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'apps.mailings',
     'apps.api',
     'apps.polls',
+    'apps.mailings',
 ]
 
 MIDDLEWARE = [
@@ -58,12 +58,12 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST'),
-        'PORT': os.environ.get('POSTGRES_PORT'),
+        'ENGINE': os.environ.get('SQL_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.environ.get('SQL_NAME', default='nots_db'),
+        'USER': os.environ.get('SQL_USER', default='manager'),
+        'PASSWORD': os.environ.get('SQL_PASSWORD', default='manager_password'),
+        'HOST': os.environ.get('SQL_HOST', default='dev_db'),
+        'PORT': os.environ.get('SQL_PORT', default='5432'),
     }
 }
 
@@ -91,7 +91,53 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "staticfiles")]
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#REDIS:
+REDIS_HOST = os.environ.get('REDIS_HOST', default='0.0.0.0')
+REDIS_PORT = os.environ.get('REDIS_PORT', default='6379')
+
+#REDIS:
+# REDIS_HOST = 'redis'
+# REDIS_PORT = '6379'
+
+#CELERY
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ":" + REDIS_PORT + '/0'
+CELERY_ACCEPT_CONTENT = {'application/json'}
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+#EMAIL
+EMAIL_HOST = os.environ.get('EMAIL_HOST', default='smtp.mail.ru')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', default='2525')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', default='mail@mail.ru')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', default='host_pass')
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', default='mail@gmail.com')
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ]
+
+}
+
+API_KEY = os.environ.get('API_KEY')
+
+
+
