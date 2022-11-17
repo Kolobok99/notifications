@@ -5,7 +5,7 @@ import time
 
 import arrow
 import requests
-from django.conf import settings
+from conf import settings
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 
@@ -86,8 +86,8 @@ def messages_sender(messages: QuerySet[mailing_models.Message]) -> None:
         message = updating_message_status_by_time(message)
         if message.status == 'CREATED':
             status = send_message_by_fbrq_api(message)
-            if status != '200':
-                logger.warning(f'SENDING_FAILED <MESSAGE_id_{message.id}>')
+            if status != 200:
+                logger.warning(f'SENDING_FAILED <MESSAGE_id_{message.id}>, code={status}')
                 time.sleep(60 * 5)
                 send_message_by_fbrq_api(message)
         elif message.status == 'IS_OVER':

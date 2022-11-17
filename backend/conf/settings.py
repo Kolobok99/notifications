@@ -139,7 +139,7 @@ REST_FRAMEWORK = {
 
 }
 
-API_KEY = os.environ.get('API_KEY')
+API_KEY = os.environ.get('API_KEY', default='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDAxMjEyOTEsImlzcyI6ImZhYnJpcXVlIiwibmFtZSI6IkBaSUFfOTg3In0.NfjBxMbrpsgv4MyX6LYhCSy0gRZNxs5m94M9eJtdRZ4')
 
 logger.add(
     "logs/log.json",

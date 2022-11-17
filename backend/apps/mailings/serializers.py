@@ -75,7 +75,13 @@ class MailingStatisticSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = mailing_models.MailingStatistic
-        fields = "__all__"
+        fields = ['mailing', 'msg_count', 'created_count',
+                   'sent_count', 'delivered_count', 'errors_count',
+                   'is_overed_count', 'is_limited_count'
+                ]
+
+    def get_fields(self, *args, **kwargs):
+        fields = super().get_fields(*args, **kwargs)
 
 
 class MailingSerializer(serializers.ModelSerializer):
