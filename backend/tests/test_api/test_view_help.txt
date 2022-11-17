@@ -1,0 +1,80 @@
+Конечные точки:
+
+1. Client
+    list
+        - от анона                                              - 403 +
+        - от админа                                             - 200 +
+    retrieve
+        - от анона                                              - 403 +
+        - от админа valid_phoned                                - 200 +
+    create
+        - от анона valid_data                                   - 403 +
+        - от админа in_valid_data:                              - 400 +
+                    a. invalid_phone_format                           +
+                    b. valid_region_code                              +
+                    c. not_exist_tag                                  +
+        - от админа in_valid_data:                              - 400 +
+                    a. used_phone                                     +
+        - от админа valid_data new_region_code                  - 201 +
+        - от админа valid_data old_region_code                  - 201 +
+    update
+        - от анона valid_phone valid_data                       - 403 +
+        - от admin valid_phone in_valid_data:                   - 400 +
+                    a. invalid_phone_format                           +
+                    b. valid_region_code                              +
+                    c. not_exist_tag                                  +
+        - от admin valid_phone in_valid_data:                   - 400 +
+                    a. used_phonw                                     +
+        - от админа valid_phone valid_data new_region_code      - 200 +
+        - от админа valid_phone valid_data old_region_code      - 200 +
+
+    delete
+        - от анона valid_phone                                  - 403 +
+        - от админа valid_phone                                 - 204 +
+
+2. Tag
+    list
+        - от анона                                              - 403 +
+        - от админа                                             - 200 +
+    retrieve
+        - от анона valid_tag                                    - 403 +
+        - от админа valid_tag                                   - 200 +
+    create
+        - от анона valid_data                                   - 403 +
+        - от админа in_valid_data:                              - 400 +
+                    a. invalid_tag_start                              +
+                    b. invalid_tag_space                              +
+        - от админа valid_data                                  - 201 +
+    update
+        - от анона                                              - 403 +
+        - от админа valid_tag valid_data                        - 405 +
+    delete
+        - от анона valid_tag                                    - 403 +
+        - от админа valid_phone                                 - 204 +
+3. Mailing
+    list
+        - от анона                                              - 403 +
+        - от админа                                             - 200 +
+    retrieve
+        - от анона valid_pk                                     - 403 +
+        - от админа valid_pk                                    - 200 +
+    create
+        - от анона valid_data                                   - 403 +
+        - от админа in_valid_data                               - 400 +
+                    d. tag not exist                                  +
+                    e code not exist                                  +
+        - от админа valid_data                                  - 201 +
+    update
+        - от анона  valid_pk                                    - 403 +
+        - от админа valid_pk in_valid_data                      - 400 +
+                    a. start_time > end_time
+                    b. current_time > end_time
+                    c. interval_start > interval_end
+        - от админа valid_pk (status=C) valid_data              - 403 +
+        - от админа valid_pk (status=F) valid_data              - 403 +
+        - от админа valid_pk valid_data                         - 201 +
+    delete
+        - от анона valid_pk                                     - 403 +
+        - от админа valid_pk status=C                           - 204 +
+        - от админа valid_pk status=F                           - 204 +
+        - от админа valid_pk                                    - 204 +
