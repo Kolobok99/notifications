@@ -55,3 +55,31 @@ class ClientTagSerializer(serializers.ModelSerializer):
                 )
             ]},
         }
+
+
+class MailingStatisticSerializer(serializers.ModelSerializer):
+    """Сериалайзер модели MailingStatistic"""
+
+    class Meta:
+        model = mailing_models.MailingStatistic
+        fields = "__all__"
+
+
+class MailingSerializer(serializers.ModelSerializer):
+    """Сериалайзер модели Mailing"""
+
+    statistic = MailingStatisticSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = mailing_models.Mailing
+        fields = ('id', 'status', 'start_time', 'end_time',
+                  'text', 'filter_codes', 'filter_tags',
+                  'task_id', 'time_interval_start', 'time_interval_end', 'statistic',)
+        validators = [
+            mailing_custom_validators.MailingStartTimeValidator,
+            mailing_custom_validators.MailingEndTimeValidator,
+            mailing_custom_validators.MailingTimeIntervalValidator,
+        ]
+        extra_kwargs = {
+            'status': {'source': 'get_status_display'},
+        }
