@@ -9,9 +9,13 @@ router = routers.DefaultRouter()
 router.register(r'client', views.ClientAPIView, basename='client')
 router.register(r'tag', views.ClientTagWithoutUpdateAPIView, basename='tag')
 router.register(r'mailing', views.MailingAPIView, basename='mailing')
-router.register(r'statistic', views.MailingStatisticListAPIView)
+
 
 urlpatterns = router.urls
+
+urlpatterns += [
+    path('statistic/', views.MailingStatisticListAPIView.as_view())
+]
 
 urlpatterns += [
     path('docs/', TemplateView.as_view(template_name="swagger.html")),

@@ -1,17 +1,13 @@
 import datetime
-import re
-import pytest
 
+import pytest
 from django.urls import reverse
-from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.utils.serializer_helpers import ReturnDict
 
 from apps.mailings import models as mailing_models
-
-from services import services
 
 from tests.test_api.base import BaseTestAPIClass
 
@@ -361,7 +357,6 @@ class TestTagAPIViewSet(BaseTestAPIClass):
     def test_create_tag_with_IN_valid_data_by_admin(self, tags, admin):
         """Тест: отправка create-запроса на tag с in_valid_data от админа """
 
-        error_tag_start = 'error_tag_start'
         error_tag_spaces = 'error_tag_spaces'
 
         data = self._test_create__with_IN_valid_payload_by_privileged_user(prv_user=admin,
@@ -370,7 +365,6 @@ class TestTagAPIViewSet(BaseTestAPIClass):
                                                                            model=mailing_models.ClientTag,
                                                                            start_count=tags.count())
 
-        assert error_tag_start in data['tag'].keys()
         assert error_tag_spaces in data['tag'].keys()
 
     # ------------------------ UPDATE ------------------------#

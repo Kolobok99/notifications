@@ -2,3 +2,5 @@
 /backend/freeze_req.txt
 /backend/.env.dev
 /venv
+/backend/celerybeat-schedule
+/backend/static/

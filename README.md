@@ -43,7 +43,6 @@ Notifications Service - REST API для рассылки сообщений кл
 - Nginx
 - gunicorn
 - Docker, docker-compose
-- Celery
 - Redis
 
 Зависимости
@@ -130,20 +129,20 @@ Notifications Service - REST API для рассылки сообщений кл
 
     - GET  api/v1/client/ - получить список всех клиентов
     - POST api/v1/client/ - добавить нового клиента
-    - GET  api/v1/client/{int:pk}/ получить клиента по его id
-    - PATCH api/v1/client/{int:pk}/ изменить данные клиента по его id
-    - DELETE api/v1/client/{int:pk}/ удалить клиента по его id
+    - GET  api/v1/client/{phone}/ получить клиента по его phone
+    - PATCH api/v1/client/{phone}/ изменить данные клиента по его phone
+    - DELETE api/v1/client/{phone}/ удалить клиента по его phone
 
 	- GET  api/v1/tag/ - получить все тэги
 	- POST api/v1/tag/ - добавить новый тэг
-	- GET  api/v1/tag/{char:tag}/ получить тэг по его tag
-	- DELETE api/v1/tag/{char:tag}/ удалить тэг по его tag
+	- GET  api/v1/tag/{tag}/ получить тэг по его tag
+	- DELETE api/v1/tag/{tag}/ удалить тэг по его tag
 
 	- GET  api/v1/mailing/ - получить все рассылки со статистикой
 	- POST api/v1/mailing/ - добавить новую рассылку
-	- GET  api/v1/mailing/{int:pk}/ получить рассылку по еe id со статистикой 
-	- PATCH api/v1/mailing/{int:pk}/ изменить данные рассылки по ее id
-	- DELETE api/v1/mailing/{int:pk}/ удалить рассылку по ее id
+	- GET  api/v1/mailing/{id}/ получить рассылку по еe id со статистикой 
+	- PATCH api/v1/mailing/{id}/ изменить данные рассылки по ее id
+	- DELETE api/v1/mailing/{id}/ удалить рассылку по ее id
 
 	- GET api/v1/statistic/ - получить все статистики рассылок
 
