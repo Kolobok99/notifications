@@ -1,9 +1,12 @@
+from typing import OrderedDict
+
 from rest_framework import serializers, validators
 
 from apps.mailings import models as mailing_models
 from apps.mailings import validators as mailing_custom_validators
+from conf.celery import app
 
-from services import mailings_services
+from services import mailings_services, polls_services
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -69,6 +72,19 @@ class MailingSerializer(serializers.ModelSerializer):
     """Сериалайзер модели Mailing"""
 
     statistic = MailingStatisticSerializer(read_only=True, many=False)
+
+    def create(self, validated_data):
+        instance = super(MailingSerializer, self).create(validated_data)
+        polls_services.mailing_task_creator_and_task_id_updator(instance)
+
+        return instance
+
+    def update(self, instance: mailing_models.Mailing, validated_data: OrderedDict) -> mailing_models.Mailing:
+        app.control.revoke(task_id=instance.task_id, terminate=True, signal="SIGKILL")
+        instance = super().update(instance, validated_data)
+        instance = polls_services.mailing_task_creator_and_task_id_updator(instance)
+
+        return instance
 
     class Meta:
         model = mailing_models.Mailing
