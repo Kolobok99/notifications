@@ -1,3 +1,5 @@
+from loguru import logger
+
 import os
 from pathlib import Path
 
@@ -92,8 +94,8 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "staticfiles")]
+STATIC_ROOT = os.path.join(BASE_DIR, "docs")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "swagger_files")]
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -138,6 +140,37 @@ REST_FRAMEWORK = {
 }
 
 API_KEY = os.environ.get('API_KEY')
+
+logger.add(
+    "logs/log.json",
+    format="{time} - {level} - {file}  - {message}",
+    level=os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+    rotation="10 MB",
+    compression="zip",
+    serialize=True,
+)
+
+logger.add(
+    "logs/log.log",
+    format="{time} - {level} - {file} - {message}",
+    level=os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+    rotation="10 MB",
+    compression="zip",
+    serialize=False,
+    backtrace=False,
+    diagnose=False
+)
+
+logger.add(
+    "logs/log_full_traceback.log",
+    format="{time} - {level} - {file} - {module} - {message}",
+    level=os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+    rotation="10 MB",
+    compression="zip",
+    serialize=False,
+    backtrace=True,
+    diagnose=True
+)
 
 
 

@@ -1,4 +1,5 @@
 from django.conf import settings
+from conf.settings import logger
 from django.utils import timezone
 
 from conf.celery import app
@@ -21,20 +22,21 @@ def task_mailing(mailing_pk: mailing_models.Mailing.pk) -> None:
         Args:
             mailing_pk (int): ID инстанса модели mailing прил. mailings
     """
-
     mailing = mailing_models.Mailing.objects.get(pk=mailing_pk)
     mailing.status = 'S'
     mailing.save()
 
+    logger.debug(f"STARTING <MAILING_TASK>(mailing_id={mailing_pk}) (task_id={mailing.task_id})")
+
     clients = clients_generator_by_mailing_filters(mailing)
-
     messages = messages_generator_by_clients_in_mailing(mailing, clients)
-
     messages_sender(messages)
 
     mailing_statistic_generator(mailing=mailing)
     mailing.status = 'F'
     mailing.save()
+
+    logger.debug(f"ENDING <MAILING_TASK>(mailing_id={mailing_pk}) (task_id={mailing.task_id})")
 
 
 @app.task

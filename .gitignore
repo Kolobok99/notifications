@@ -3,4 +3,4 @@
 /backend/.env.dev
 /venv
 /backend/celerybeat-schedule
-/backend/static/
+/backend/docs/

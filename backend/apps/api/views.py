@@ -1,5 +1,7 @@
 from rest_framework import viewsets, generics
 
+from conf.settings import logger
+
 from apps.api import permissions
 from apps.mailings import serializers as mailing_serializers
 from apps.mailings import models as mailings_models
@@ -12,6 +14,10 @@ class ClientAPIView(viewsets.ModelViewSet):
     serializer_class = mailing_serializers.ClientSerializer
     lookup_field = 'phone'
     lookup_url_kwarg = 'phone'
+
+    def destroy(self, request, *args, **kwargs):
+        logger.debug(f'DESTROY <CLIENT_phone_{self.get_object().phone}>')
+        return super().destroy(request, *args, **kwargs)
 
 
 class ClientTagWithoutUpdateAPIView(viewsets.ModelViewSet):
@@ -40,6 +46,9 @@ class MailingAPIView(viewsets.ModelViewSet):
             self.permission_classes = [permissions.MailingUpdating]
         return super().get_permissions()
 
+    def destroy(self, request, *args, **kwargs):
+        logger.debug(f'DESTROY <MAILING_id_{self.get_object().id}>')
+        return super().destroy(request, *args, **kwargs)
 
 class MailingStatisticListAPIView(generics.ListAPIView):
     """read_only APIView модели MailingStatistic"""

@@ -1,5 +1,7 @@
+from conf.settings import logger
+
 import datetime
-from datetime import time
+import time
 
 import arrow
 import requests
@@ -80,12 +82,14 @@ def messages_sender(messages: QuerySet[mailing_models.Message]) -> None:
             множество инстансов модели Message одной рассылки из прил. mailing
     """
 
-    #"""Генерирует отправку переданных messages на FBRQ API"""
-
     for index, message in enumerate(messages):
         message = updating_message_status_by_time(message)
         if message.status == 'CREATED':
-            send_message_by_fbrq_api(message)
+            status = send_message_by_fbrq_api(message)
+            if status != '200':
+                logger.warning(f'SENDING_FAILED <MESSAGE_id_{message.id}>')
+                time.sleep(60 * 5)
+                send_message_by_fbrq_api(message)
         elif message.status == 'IS_OVER':
             messages[index:].update(status='IS_OVER')
             break
@@ -116,7 +120,8 @@ def send_message_by_fbrq_api(msg: mailing_models.Message) -> requests.status_cod
     }
 
     r = requests.post(url=url, headers=headers, json=payload)
-
+    logger.debug(f'SENDING <MESSAGE_id_{msg.pk}>(client_phone={msg.client.phone}; '
+                 f'text={msg.mailing.text};) ')
     if r.status_code == 200:
         msg.status = '200'
     else:

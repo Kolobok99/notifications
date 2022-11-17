@@ -5,6 +5,7 @@ from rest_framework import serializers, validators
 from apps.mailings import models as mailing_models
 from apps.mailings import validators as mailing_custom_validators
 from conf.celery import app
+from conf.settings import logger
 
 from services import mailings_services, polls_services
 
@@ -17,6 +18,14 @@ class ClientSerializer(serializers.ModelSerializer):
         validated_data['region_code'] = mailings_services.get_or_create_region_code_by_phone(phone)
 
         instance = super(ClientSerializer, self).create(validated_data)
+        logger.debug(f'CREATE <CLIENT_phone_{instance.phone}>(t_z={instance.timezone}; '
+                     f'code={instance.region_code}; '
+                     f'tags={[t.tag for t in instance.tags.all()]})')
+
+        logger.debug(f'UPDATE <CLIENT_phone_{instance.phone}> -> ({validated_data.get("phone", instance.phone)})'
+                     f'(t_z={instance.timezone} -> ({validated_data.get("timezone", instance.timezone)}); '
+                     f'code={instance.region_code} -> ({validated_data.get("region_code", instance.region_code)}); '
+                     f'tags={[t.tag for t in instance.tags.all()]} -> ({validated_data.get("tags", [t.tag for t in instance.tags.all()])}))')
 
         return instance
 
@@ -42,6 +51,7 @@ class ClientSerializer(serializers.ModelSerializer):
             ]},
             'region_code': {'read_only': True}
         }
+
 
 class ClientTagSerializer(serializers.ModelSerializer):
     """Сериалайзер модели ClientTag"""
@@ -76,13 +86,26 @@ class MailingSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         instance = super(MailingSerializer, self).create(validated_data)
         polls_services.mailing_task_creator_and_task_id_updator(instance)
-
+        logger.debug(f'CREATE <MAILING_pk_{instance.pk}> '
+                     f'start_time={instance.start_time}; end_time={instance.end_time};'
+                     f'text={instance.text};'
+                     f'filter_codes={[t.code for t in instance.filter_codes.all()]};'
+                     f'filter_tags={[t.tag for t in instance.filter_tags.all()]})')
         return instance
 
     def update(self, instance: mailing_models.Mailing, validated_data: OrderedDict) -> mailing_models.Mailing:
         app.control.revoke(task_id=instance.task_id, terminate=True, signal="SIGKILL")
         instance = super().update(instance, validated_data)
         instance = polls_services.mailing_task_creator_and_task_id_updator(instance)
+        logger.debug(f'UPDATE <MAILING_pk_{instance.pk}> '
+                     f'start_time={instance.start_time} -> ({validated_data.get("start_time", instance.start_time)});'
+                     f' end_time={instance.end_time}; -> ({validated_data.get("end_time", instance.end_time)})'
+                     f'text={instance.text};  -> ({validated_data.get("text", instance.text)})'
+                     f'filter_codes={[t.code for t in instance.filter_codes.all()]}; ->'
+                     f'({validated_data.get("filter_codes", [t.code for t in instance.filter_codes.all()])})'
+                     f'filter_tags={[t.tag for t in instance.filter_tags.all()]}) ->'
+                     f'({validated_data.get("filter_tags", [t.tag for t in instance.filter_tags.all()])})'
+                     )
 
         return instance
 
