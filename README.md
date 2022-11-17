@@ -81,8 +81,8 @@ Notifications Service - REST API для рассылки сообщений кл
 		TIME_ZONE={your_time_zone_name}		
 
 		SQL_ENGINE=django.db.backends.postgresql
-	    SQL_NAME={your_sql_name}
-        SQL_USER={your_sql_user}
+	    SQL_NAME=notififcation_db
+        SQL_USER=manager
         SQL_PASSWORD={your_sql_password}
         SQL_HOST=db
         SQL_PORT={your_sql_port}
@@ -102,14 +102,14 @@ Notifications Service - REST API для рассылки сообщений кл
 5. Инициализировать .env.prod.celery со следующими переменными:
 		
      	DB_HOST=db
-		DB_NAME={your_sql_name}
-		DB_USER={your_sql_user}
+		DB_NAME=notification_db
+		DB_USER=manager
 		DB_PASS={your_sql_password}
 
 6. Инициализировать .env.prod.db со следующими переменными:
 
-		POSTGRES_DB={your_sql_name}
-		POSTGRES_USER={your_sql_user}
+		POSTGRES_DB=notification_db
+		POSTGRES_USER=manager
 		POSTGRES_PORT={your_sql_port}
 		POSTGRES_PASSWORD={your_sql_password}
 
