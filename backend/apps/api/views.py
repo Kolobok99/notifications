@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 
 from apps.api import permissions
 from apps.mailings import serializers as mailing_serializers
@@ -38,3 +38,10 @@ class MailingAPIView(viewsets.ModelViewSet):
         if self.action in ['update', 'partial_update']:
             self.permission_classes = [permissions.MailingUpdating]
         return super().get_permissions()
+
+
+class MailingStatisticListAPIView(generics.ListAPIView):
+    """read_only APIView модели MailingStatistic"""
+
+    queryset = mailings_models.MailingStatistic.objects.all()
+    serializer_class = mailing_serializers.MailingStatisticSerializer
