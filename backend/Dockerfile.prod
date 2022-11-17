@@ -27,5 +27,3 @@ RUN chown -R app:app $APP_DIR
 RUN chmod +x $APP_DIR/scripts/wait_db.sh
 
 USER app
-
-
