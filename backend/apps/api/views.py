@@ -4,6 +4,7 @@ from apps.api import permissions
 from apps.mailings import serializers as mailing_serializers
 from apps.mailings import models as mailings_models
 
+
 class ClientAPIView(viewsets.ModelViewSet):
     """APIView модели Client"""
 
