@@ -4,3 +4,4 @@
 /venv
 /backend/celerybeat-schedule
 /backend/docs/
+/backend/logs/

@@ -69,42 +69,49 @@ Notifications Service - REST API для рассылки сообщений кл
 		git clone https://gitlab.com/izolotavin99/notifications
 		cd notifications
 
-2. Инициализировать .env.prod. файлы
+2. Создать директорию с .env.prod. файлами
 
 		mkdir .env_files.prod
 		cd .env_files.prod
-	    
-	    echo DEBUG=0 >> .env.prod.settings
-		echo SECRET_KEY=your_secret_key >> .env.prod.settings
-		echo DJANGO_ALLOWED_HOSTS=your_host_ip >> .env.prod.settings
-		echo TIME_ZONE=your_time_zone_name >> .env.prod.settings		
+3. Инициализировать .env.prod.settings со следующими переменными:
 
-		echo SQL_ENGINE=django.db.backends.postgresql >> .env.prod.settings
-	    echo SQL_NAME=your_sql_name >> .env.prod.settings
-        echo SQL_USER=your_sql_user >> .env.prod.settings
-        echo SQL_PASSWORD=your_sql_password >> .env.prod.settings
-        echo SQL_HOST=db >> .env.prod.settings
-        echo SQL_PORT=your_sql_port >> .env.prod.settings
+	    DEBUG=0
+		SECRET_KEY={your_secret_key}
+		DJANGO_ALLOWED_HOSTS={your_host_ip}
+		TIME_ZONE={your_time_zone_name}		
 
-		echo REDIS_HOST=redis >> .env.prod.settings
-		echo REDIS_PORT=6379 >> .env.prod.settings
+		SQL_ENGINE=django.db.backends.postgresql
+	    SQL_NAME={your_sql_name}
+        SQL_USER={your_sql_user}
+        SQL_PASSWORD={your_sql_password}
+        SQL_HOST=db
+        SQL_PORT={your_sql_port}
 
-		echo EMAIL_HOST=your_email_host >> .env.prod.email
-		echo EMAIL_PORT=your_email_port >> .env.prod.email
-		echo EMAIL_HOST_PASSWORD=your_email_password >> .env.prod.email
-		echo ADMIN_EMAIL=your_admin_email >> .env.prod.email
+		REDIS_HOST=redis
+		REDIS_PORT=6379
 		
-		echo API_KEY=your_api_key >> .env.prod.settings
+		echo API_KEY={your_api_key}
 
-		echo DB_HOST=db >> .env.prod.celery
-		echo DB_NAME=your_sql_name >> .env.prod.celery
-		echo DB_USER=your_sql_user >> .env.prod.celery
-		echo DB_PASS=your_sql_password >> .env.prod.celery
+4. Инициализировать .env.prod.email со следующими переменными:
 
-		echo POSTGRES_DB=your_sql_name >> .env.prod.db
-		echo POSTGRES_USER=your_sql_user >> .env.prod.db
-		echo POSTGRES_PORT=your_sql_port >> .env.prod.db
-		echo POSTGRES_PASSWORD=your_sql_password >> .env.prod.db
+		EMAIL_HOST={your_email_host}
+		EMAIL_PORT={your_email_port}
+		EMAIL_HOST_PASSWORD={your_email_password}
+		ADMIN_EMAIL={your_admin_email}
+
+5. Инициализировать .env.prod.celery со следующими переменными:
+		
+     	DB_HOST=db
+		DB_NAME={your_sql_name}
+		DB_USER={your_sql_user}
+		DB_PASS={your_sql_password}
+
+6. Инициализировать .env.prod.db со следующими переменными:
+
+		POSTGRES_DB={your_sql_name}
+		POSTGRES_USER={your_sql_user}
+		POSTGRES_PORT={your_sql_port}
+		POSTGRES_PASSWORD={your_sql_password}
 
 3. Собрать проект
 
@@ -113,7 +120,8 @@ Notifications Service - REST API для рассылки сообщений кл
 4. Запустить проект
 
 		docker compose -f docker-compose.ci.yml up
-5. Создать супер-пользователя
+
+6. Создать супер-пользователя
 
 		docker compose -f docker-compose.ci.yml exec web bash
 		python manage.py createsuperuser
