@@ -10,3 +10,15 @@ class ClientAPIView(viewsets.ModelViewSet):
     serializer_class = mailing_serializers.ClientSerializer
     lookup_field = 'phone'
     lookup_url_kwarg = 'phone'
+
+
+class ClientTagWithoutUpdateAPIView(viewsets.ModelViewSet):
+    """
+        APIView модели ClientTag
+        (с запрещенным изменением)
+    """
+
+    queryset = mailings_models.ClientTag.objects.all()
+    serializer_class = mailing_serializers.ClientTagSerializer
+    http_method_names = ['head', 'options', 'get', 'post', 'delete']
+    lookup_field = 'tag'

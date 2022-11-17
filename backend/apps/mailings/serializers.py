@@ -37,6 +37,21 @@ class ClientSerializer(serializers.ModelSerializer):
                     message='ошибка: клиент с таким номером уже существует'
                 )
             ]},
-            # 'tags': {'write_only': True},
             'region_code': {'read_only': True}
+        }
+
+class ClientTagSerializer(serializers.ModelSerializer):
+    """Сериалайзер модели ClientTag"""
+
+    class Meta:
+        model = mailing_models.ClientTag
+        fields = "__all__"
+        extra_kwargs = {
+            'tag': {'validators': [
+                mailing_custom_validators.ClientTagValidator,
+                validators.UniqueValidator(
+                    queryset=mailing_models.ClientTag.objects.all(),
+                    message='ошибка: такой тег уже существует'
+                )
+            ]},
         }
