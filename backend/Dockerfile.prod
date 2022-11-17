@@ -1,0 +1,31 @@
+FROM python:3.8
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+ENV APP_DIR=/web
+WORKDIR $APP_DIR
+
+COPY . $APP_DIR
+
+RUN apt-get update \
+    && groupadd app \
+    && useradd -m -g app app -p PASSWORD \
+    && usermod -aG app app \
+    \
+    && mkdir -p $APP_DIR/static \
+    \
+    && apt-get  install -y libpq-dev \
+                           postgresql \
+                           postgresql-contrib \
+                           netcat \
+    && pip install -r req.txt \
+    && rm -rf /var/lib/apt/lists/*
+
+
+RUN chown -R app:app $APP_DIR
+RUN chmod +x $APP_DIR/scripts/wait_db.sh
+
+USER app
+
+

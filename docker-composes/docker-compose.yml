@@ -1,0 +1,55 @@
+version: '3.8'
+
+volumes:
+  dev_postgres_data:
+
+networks:
+  default:
+    name: drf_template_dev_network
+
+services:
+  dev_web:
+    container_name: drf_template_dev_web_container
+    build: ../backend
+    command: bash -c "
+      python manage.py flush --no-input
+      && python manage.py migrate
+      && python manage.py collectstatic --no-input --clear
+      && python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ../backend/:/app/
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=very_secret_key
+
+      - POSTGRES_NAME=dev_db
+      - POSTGRES_USER=manager
+      - POSTGRES_PASSWORD=manager_password
+      - POSTGRES_HOST=dev_db
+      - POSTGRES_PORT=5432
+
+      - DATABASE=postgres
+    depends_on:
+      - dev_db
+    entrypoint: ./scripts/wait_db.sh
+
+
+  dev_db:
+    container_name: drf_template_dev_db_container
+    image: postgres
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    volumes:
+      - dev_postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=dev_db
+      - POSTGRES_USER=manager
+      - POSTGRES_PASSWORD=manager_password
+

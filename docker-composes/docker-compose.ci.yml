@@ -1,0 +1,57 @@
+version: "3.8"
+
+volumes:
+  prod_postgres_data:
+  prod_static_volume:
+
+networks:
+  default:
+    name: drf_template_prod_network
+
+services:
+  prod_web:
+    container_name: drf_template_prod_web_container
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.prod
+    image: "${WEB_IMAGE}"
+    command: bash -c "
+      python manage.py migrate
+      && python manage.py collectstatic --noinput
+      && gunicorn core.wsgi:application --bind 0.0.0.0:8000 --reload
+      "
+    volumes:
+      - prod_static_volume:/web/static
+    expose:
+      - 8000
+    env_file: ../backend/.env_files.prod/.env.prod.settings
+    depends_on:
+      - prod_db
+
+  prod_db:
+    container_name: drf_template_prod_db_container
+    image: postgres
+    volumes:
+      - prod_postgres_data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    env_file:
+      - ../backend/.env_files.prod/.env.prod.db
+
+
+
+  prod_nginx:
+    container_name: drf_template_prod_nginx_container
+    build:
+      context: ../nginx.prod
+    image: "${NGINX_IMAGE}"
+    volumes:
+      - prod_static_volume:/web/static
+    ports:
+      - "80:80"
+    depends_on:
+      - prod_web
+
+
