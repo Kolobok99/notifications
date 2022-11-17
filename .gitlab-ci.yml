@@ -1,0 +1,49 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - test
+  - cleanup
+
+before_script:
+  - export IMAGE=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+  - export WEB_IMAGE=$IMAGE:web
+  - export NGINX_IMAGE=$IMAGE:nginx
+  - export CELERY_IMAGE=$IMAGE:celery
+
+  - apk add --no-cache bash
+  - chmod +x ./backend/scripts/setup_prod_env.sh
+  - sh ./backend/scripts/setup_prod_env.sh
+  - cat ./backend/.env_files.prod/.env.prod.settings
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+
+build:
+  stage: build
+
+  script:
+    - docker-compose -f ./docker-composes/docker-compose.ci.yml build
+    - docker images
+    - docker push $IMAGE:web
+    - docker push $IMAGE:nginx
+    - docker push $IMAGE:celery
+  tags:
+    - docker
+
+
+test:
+  stage: test
+  script:
+    - docker pull $IMAGE:web || true
+    - docker pull $IMAGE:nginx || true
+    - docker pull $IMAGE:celery || true
+    - docker-compose -f ./docker-composes/docker-compose.cd.yml up -d
+    - docker-compose -f ./docker-composes/docker-compose.cd.yml run --rm web pytest
+  after_script:
+    - docker-compose -f ./docker-composes/docker-compose.cd.yml down
+  tags:
+    - docker
+
